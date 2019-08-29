@@ -56,17 +56,17 @@ Tables are modelled after star schema as below:
 
    **SQL**
       
-    SELECT song_title 
-      FROM songs s , 
-           ( SELECT song_id , count(1) 
-               FROM songplays 
-              WHERE song_id IS NOT NULL 
-              GROUP BY song_id 
-              ORDER BY count(1) DESC 
-              LIMIT 10 
-            ) f
-     WHERE s.song_id = f.song_id 
-     
+        SELECT song_title 
+          FROM songs s , 
+               ( SELECT song_id , count(1) 
+                   FROM songplays 
+                  WHERE song_id IS NOT NULL 
+                  GROUP BY song_id 
+                  ORDER BY count(1) DESC 
+                  LIMIT 10 
+                ) f
+         WHERE s.song_id = f.song_id 
+         
      
    ![Tux, the Linux mascot](popular_songs.png)
    
@@ -77,17 +77,17 @@ Tables are modelled after star schema as below:
 
    **SQL**
       
-    SELECT  username , duration duration_in_mins 
-      FROM ( SELECT u.first_name || ' '|| u.last_name username , datediff( 'min', starttime ,endtime ) duration  
-               FROM (SELECT session_id , user_id , ( timestamp 'epoch' + max(start_time) /1000 * interval '1 second')  endTime,  
-                           ( timestamp 'epoch' + min(start_time) /1000 * interval '1 second') starttime 
-                       FROM songplays  
-                       GROUP BY session_id  , user_id 
-                     ) d , users u 
-              WHERE u.user_id = d.user_id
-            ) 
-     ORDER BY duration DESC 
-     LIMIT 10
+        SELECT  username , duration duration_in_mins 
+          FROM ( SELECT u.first_name || ' '|| u.last_name username , datediff( 'min', starttime ,endtime ) duration  
+                   FROM (SELECT session_id , user_id , ( timestamp 'epoch' + max(start_time) /1000 * interval '1 second')  endTime,  
+                               ( timestamp 'epoch' + min(start_time) /1000 * interval '1 second') starttime 
+                           FROM songplays  
+                           GROUP BY session_id  , user_id 
+                         ) d , users u 
+                  WHERE u.user_id = d.user_id
+                ) 
+         ORDER BY duration DESC 
+         LIMIT 10
      
      
    ![Tux, the Linux mascot](session_duration.png)
