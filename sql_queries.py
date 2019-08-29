@@ -69,7 +69,7 @@ user_id INTEGER ,
 first_name varchar NOT NULL, 
 last_name varchar, 
 gender char, 
-level varchar,
+level varchar NOT NULL,
 PRIMARY KEY(user_id)
 )
 """)
@@ -100,12 +100,12 @@ PRIMARY KEY(artist_id)
 time_table_create = ("""
 CREATE TABLE   if not exists time (
 start_time bigint NOT NULL, 
-hour int, 
-day int, 
-week int, 
-month int, 
-year int, 
-weekday varchar ,
+hour int NOT NULL, 
+day int NOT NULL, 
+week int NOT NULL, 
+month int NOT NULL, 
+year int NOT NULL, 
+weekday varchar NOT NULL,
 PRIMARY KEY   ( start_time )
 )
 """)

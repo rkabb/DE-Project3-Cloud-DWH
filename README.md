@@ -44,12 +44,54 @@ Tables are modelled after star schema as below:
   
 - sql_queries.py has all the DDL/DML and COPY statements defined, which will be used by etl and create_tables modules.
    
-- cretae_tables.py will create the database and tables. Run this script from terminal window before
+- create_tables.py will create the database and tables. Run this script from terminal window before
   starting the ETL process. This also has DDL's to drop tables. Running this would remove any previously loaded data.
   
 - etl.py will read all the log files in S3 and loads them to stage tables.
 
+# Sample Analytics:
 
+- __What are the top 10 songs listened by users? List in the order of popularity.__
+
+
+   **SQL**
+      
+    SELECT song_title 
+      FROM songs s , 
+           ( SELECT song_id , count(1) 
+               FROM songplays 
+              WHERE song_id IS NOT NULL 
+              GROUP BY song_id 
+              ORDER BY count(1) DESC 
+              LIMIT 10 
+            ) f
+     WHERE s.song_id = f.song_id 
+     
+     
+   ![Tux, the Linux mascot](popular_songs.png)
+   
+   
+ 
+- __What are the top 10 longest active session and user name for that session ?__
+
+
+   **SQL**
+      
+    SELECT  username , duration duration_in_mins 
+      FROM ( SELECT u.first_name || ' '|| u.last_name username , datediff( 'min', starttime ,endtime ) duration  
+               FROM (SELECT session_id , user_id , ( timestamp 'epoch' + max(start_time) /1000 * interval '1 second')  endTime,  
+                           ( timestamp 'epoch' + min(start_time) /1000 * interval '1 second') starttime 
+                       FROM songplays  
+                       GROUP BY session_id  , user_id 
+                     ) d , users u 
+              WHERE u.user_id = d.user_id
+            ) 
+     ORDER BY duration DESC 
+     LIMIT 10
+     
+     
+   ![Tux, the Linux mascot](session_duration.png)
+ 
 # Maintenance
 - If there is a n need in future to add new tables or modify existingtable, sql_queries.py script needs to be modified.
   This has all the DDL/DML and SQL to do the required operation
